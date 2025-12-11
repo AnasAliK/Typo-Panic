@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Save Me From Myself</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=Roboto:wght@400;500;700&family=Open+Sans:wght@400;600&family=Lato:wght@400;700&family=Comic+Neue:wght@700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Default variables */
+            --app-bg: #f5f5f5;
+            --header-bg: rgba(255, 255, 255, 0.85);
+            --header-text: #000000;
+            --bubble-bg: #ffffff;
+            --bubble-text: #000000;
+            --accent: #3b82f6;
+            --fixed-text: #3b82f6;
+            --font-main: 'Inter', sans-serif;
+            --border-radius: 1.25rem;
+            --shadow: 0 2px 5px rgba(0,0,0,0.05);
+            
+            /* Boss Colors */
+            --boss-skin: #fca5a5;
+            --boss-shirt: #fff;
+            --boss-tie: #dc2626;
+            --boss-suit: #1e293b;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* Darker background for focus */
+            overflow: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- LAYOUT WRAPPER --- */
+        .game-layout {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            max-width: 1400px;
+            align-items: center;
+            justify-content: space-between;
+            padding: 2rem;
+        }
+
+        /* --- THE OFFICE WORLD (Left Side - CCTV Style) --- */
+        .world-scene {
+            position: relative;
+            flex: 1;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #334155;
+            border-radius: 4px;
+            margin-right: 2rem;
+            overflow: hidden;
+            border: 2px solid #1e293b;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        /* CCTV Effects */
+        .world-scene::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: 
+                linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%),
+                linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background-size: 100% 4px, 6px 100%;
+            pointer-events: none;
+            z-index: 100;
+        }
+        .world-scene::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, rgba(0,0,0,0) 60%, rgba(0,0,0,0.6) 100%);
+            pointer-events: none;
+            z-index: 101;
+        }
+
+        .cam-ui {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 102;
+            color: rgba(255,255,255,0.7);
+            font-family: monospace;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+        .rec-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: red;
+            border-radius: 50%;
+            margin-right: 5px;
+            animation: blink-rec 1s infinite;
+        }
+        @keyframes blink-rec { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        /* Background Details */
+        .office-window {
+            position: absolute;
+            top: 50px;
+            left: 30px;
+            width: 140px;
+            height: 180px;
+            background: #1e293b;
+            border: 8px solid #475569;
+            overflow: hidden;
+        }
+        .city-view {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, #0f172a, #1e293b);
+            position: relative;
+        }
+        .city-view::after {
+            content: '';
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            width: 100%;
+            height: 30px;
+            background-image: 
+                radial-gradient(circle at 15px 15px, #fbbf24 2px, transparent 2px),
+                radial-gradient(circle at 40px 8px, #fbbf24 1px, transparent 1px),
+                radial-gradient(circle at 70px 20px, #fbbf24 2px, transparent 2px);
+            background-size: 120px 30px;
+            background-repeat: repeat-x;
+            opacity: 0.4;
+        }
+        .office-cabinet {
+            position: absolute;
+            top: 150px;
+            right: 30px;
+            width: 80px;
+            height: 120px;
+            background: #78350f;
+            border-radius: 4px;
+            border-bottom: 10px solid #451a03;
+        }
+        .office-plant {
+            position: absolute;
+            bottom: 130px;
+            right: 40px;
+            width: 60px;
+            height: 80px;
+        }
+        .plant-pot { width: 100%; height: 40%; background: #b45309; border-radius: 0 0 8px 8px; position: absolute; bottom: 0; }
+        .plant-leaves { width: 80%; height: 70%; background: #065f46; border-radius: 50% 50% 0 0; position: absolute; bottom: 30%; left: 10%; }
+
+        /* BOSS CHARACTER */
+        .boss-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            transition: transform 0.3s ease;
+            transform: scale(0.95) translateY(20px); 
+            z-index: 10;
+        }
+
+        .head {
+            width: 100px;
+            height: 110px;
+            background: var(--boss-skin);
+            border-radius: 40px;
+            position: absolute;
+            top: 20px;
+            left: 100px;
+            z-index: 20;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: background-color 0.3s ease;
+        }
+
+        /* Realistic Glasses */
+        .glasses {
+            width: 80px;
+            height: 26px;
+            position: absolute;
+            top: 55px; /* Sitting on nose */
+            left: 110px; /* Centered */
+            z-index: 22;
+            background: linear-gradient(#1e293b, #1e293b) no-repeat center/14px 4px;
+        }
+
+        .glasses::before, .glasses::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            width: 32px;
+            height: 26px;
+            background: rgba(30, 41, 59, 0.7); 
+            border: 4px solid #1e293b;
+            border-radius: 6px 6px 12px 12px;
+            box-shadow: inset 0 2px 5px rgba(255,255,255,0.2);
+        }
+
+        .glasses::before { left: 0; }
+        .glasses::after { right: 0; }
+
+        .body {
+            width: 160px;
+            height: 140px;
+            background: var(--boss-suit);
+            border-radius: 50px 50px 0 0;
+            position: absolute;
+            top: 110px;
+            left: 70px;
+            z-index: 5;
+        }
+
+        /* Fixed Shirt Position */
+        .shirt {
+            width: 40px;
+            height: 100px;
+            background: var(--boss-shirt);
+            position: absolute;
+            left: 130px; 
+            top: 110px;
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            z-index: 6;
+        }
+
+        /* Fixed Tie Position */
+        .tie {
+            width: 20px;
+            height: 80px;
+            background: var(--boss-tie);
+            position: absolute;
+            left: 140px;
+            top: 110px;
+            border-radius: 0 0 10px 10px;
+            z-index: 7;
+        }
+
+        /* --- ARMS & HANDS (ROTATED INWARD) --- */
+        .arm {
+            width: 35px;
+            height: 110px;
+            background: var(--boss-suit);
+            position: absolute;
+            top: 125px;
+            border-radius: 20px;
+            transform-origin: top center;
+            z-index: 30;
+            transition: transform 0.3s;
+        }
+
+        /* Rotate inwards to hit phone sides naturally */
+        .arm.left { 
+            left: 40px; 
+            transform: rotate(-40deg); 
+        }
+        .arm.right { 
+            right: 40px; 
+            transform: rotate(40deg); 
+        }
+
+        .hand {
+            width: 32px;
+            height: 32px;
+            background: var(--boss-skin);
+            border-radius: 50%;
+            position: absolute;
+            bottom: -8px;
+            left: 1px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+
+        /* The Phone held in center */
+        .boss-phone {
+            width: 65px;
+            height: 100px;
+            background: #1e293b;
+            border: 2px solid #475569;
+            border-radius: 10px;
+            position: absolute;
+            top: 190px;
+            left: 118px; /* Centered relative to arms */
+            z-index: 25; /* Below arms, above body */
+            transform: rotate(0deg); 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+            display: flex;
+            justify-content: center;
+            padding-top: 5px;
+        }
+        
+        .boss-phone::before {
+            content: '';
+            width: 55px;
+            height: 85px;
+            background: #bae6fd;
+            opacity: 0.9;
+            border-radius: 6px;
+            box-shadow: 0 0 10px #bae6fd;
+        }
+
+        .desk {
+            width: 140%;
+            height: 400px;
+            background: #78350f;
+            position: absolute;
+            bottom: -320px;
+            left: -20%;
+            transform: perspective(600px) rotateX(15deg);
+            z-index: 40;
+            border-top: 20px solid #92400e;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.6);
+        }
+
+        /* Animations */
+        @keyframes thumb-tap-l {
+            0%, 100% { transform: rotate(-40deg) translateY(0); }
+            50% { transform: rotate(-45deg) translateY(-3px); }
+        }
+        @keyframes thumb-tap-r {
+            0%, 100% { transform: rotate(40deg) translateY(0); }
+            50% { transform: rotate(45deg) translateY(-3px); }
+        }
+        @keyframes phone-bob {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(1px); }
+        }
+        @keyframes float { 0%, 100% { transform: translateY(0) rotate(3deg); } 50% { transform: translateY(-5px) rotate(3deg); } }
+        .animate-float { animation: float 3s ease-in-out infinite; }
+        @keyframes shimmer { 100% { transform: translateX(100%); } }
+        .group-hover\:animate-shimmer:hover { animation: shimmer 1s infinite; }
+
+        .boss-container.typing .boss-phone { animation: phone-bob 0.1s infinite; }
+        .boss-container.typing .arm.left { animation: thumb-tap-l 0.12s infinite; }
+        .boss-container.typing .arm.right { animation: thumb-tap-r 0.12s infinite 0.06s; }
+
+        .boss-container.angry .head { background-color: #ef4444; }
+        .boss-container.angry { animation: shake 0.1s infinite; }
+
+        /* Success Pose */
+        .boss-container.success .arm.left { transform: rotate(150deg); transition: transform 0.5s; animation: none; }
+        .boss-container.success .arm.right { transform: rotate(-150deg); transition: transform 0.5s; animation: none; }
+        .boss-container.success .boss-phone { top: 60px; transition: top 0.5s; }
+
+        /* --- DEVICE FRAME (Right Side) --- */
+        .device-frame {
+            box-shadow: 
+                0 0 0 12px #1e293b,
+                0 0 0 14px #475569,
+                0 30px 60px -15px rgba(0, 0, 0, 0.6);
+            border-radius: 44px;
+            position: relative;
+            background: #fff;
+            overflow: hidden;
+            z-index: 50;
+            width: 400px;
+            height: 800px;
+            max-height: 90vh;
+            border: 4px solid #334155;
+            flex-shrink: 0;
+        }
+
+        .device-notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 28px;
+            background: #1e293b;
+            border-bottom-left-radius: 14px;
+            border-bottom-right-radius: 14px;
+            z-index: 100;
+        }
+
+        /* --- APP STYLES --- */
+        .app-view {
+            background-color: var(--app-bg);
+            font-family: var(--font-main);
+            color: var(--bubble-text);
+            transition: background-color 0.4s ease, color 0.4s ease;
+        }
+
+        .app-header {
+            background: var(--header-bg);
+            color: var(--header-text);
+            backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .message-box {
+            background-color: var(--bubble-bg);
+            color: var(--bubble-text);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            transition: all 0.4s ease;
+            font-size: 1.05rem; 
+            line-height: 1.6;
+            border: 1px solid rgba(0,0,0,0.05);
+            min-height: 100px;
+        }
+
+        .pattern-whatsapp {
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M15 15h10v10H15V15zM65 65h10v10H65V65z' fill='%23000000' fill-opacity='0.06'/%3E%3C/svg%3E");
+        }
+
+        .pattern-grid {
+             background-image: radial-gradient(var(--accent) 1px, transparent 1px);
+             background-size: 20px 20px;
+             background-position: -10px -10px;
+        }
+
+        /* Interactions */
+        .mistake-word {
+            position: relative;
+            color: #ef4444;
+            font-weight: 700;
+            cursor: pointer;
+            border-bottom: 2px dashed rgba(239, 68, 68, 0.4);
+            transition: all 0.2s;
+            padding: 0 1px;
+        }
+        
+        .dark-mode .mistake-word {
+            color: #f87171;
+            border-bottom-color: rgba(248, 113, 113, 0.4);
+        }
+
+        .mistake-word:hover {
+            background-color: rgba(239, 68, 68, 0.1);
+            border-radius: 4px;
+        }
+
+        .word-fixed {
+            color: var(--fixed-text); 
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: inline-block;
+        }
+        
+        @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+        .animate-shake { animation: shake 0.3s ease-in-out infinite; }
+        
+        .typing-cursor::after {
+            content: '|';
+            animation: blink 1s infinite;
+            color: var(--accent);
+            margin-left: 2px;
+        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        
+        .glass { background: rgba(255,255,255,0.7); backdrop-filter: blur(10px); }
+        .screen { display: none; width: 100%; height: 100%; flex-direction: column; }
+        .screen.active { display: flex; }
+
+        @media (max-width: 900px) {
+            .game-layout {
+                flex-direction: column-reverse;
+                justify-content: center;
+                padding: 1rem;
+            }
+            .world-scene {
+                height: 200px;
+                width: 100%;
+                margin-right: 0;
+                margin-top: 1rem;
+                flex: none;
+            }
+            .boss-container {
+                transform: scale(0.5);
+                transform-origin: bottom center;
+            }
+            .device-frame {
+                height: 60vh;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-layout">
+        
+        <!-- === WORLD SCENE (CCTV) === -->
+        <div class="world-scene">
+            <div class="cam-ui">
+                <span class="rec-dot"></span>CAM 04 [LIVE]
+            </div>
+            
+            <!-- Background Elements -->
+            <div class="office-window"><div class="city-view"></div></div>
+            <div class="office-cabinet"></div>
+            <div class="office-plant">
+                <div class="plant-pot"></div>
+                <div class="plant-leaves"></div>
+            </div>
+
+            <div id="boss" class="boss-container">
+                <div class="head"></div>
+                <div class="glasses"></div>
+                <div class="body"></div>
+                <div class="shirt"></div>
+                <div class="tie"></div>
+                <div class="boss-phone"></div> 
+                <div class="arm left"><div class="hand"></div></div>
+                <div class="arm right"><div class="hand"></div></div>
+                <div class="desk"></div>
+            </div>
+        </div>
+
+        <!-- === DEVICE FRAME === -->
+        <div class="device-frame">
+            <div class="device-notch"></div>
+
+            <!-- Title Screen (NEW DESIGN) -->
+            <div id="title-screen" class="screen active bg-slate-50 relative z-10 overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-blue-100/50 to-transparent"></div>
+                <div class="absolute -top-10 -right-10 w-40 h-40 bg-purple-200 rounded-full blur-3xl opacity-30"></div>
+                <div class="absolute bottom-10 -left-10 w-40 h-40 bg-blue-200 rounded-full blur-3xl opacity-30"></div>
+
+                <div class="flex-1 flex flex-col items-center justify-center p-8 z-10 text-center">
+                    
+                    <!-- Hero Icon -->
+                    <div class="mb-6 relative animate-float">
+                        <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl rotate-3 shadow-xl flex items-center justify-center text-white text-4xl ring-4 ring-white">
+                            <i class="ph-fill ph-shield-check"></i>
+                        </div>
+                        <div class="absolute -bottom-2 -right-2 w-10 h-10 bg-white rounded-xl shadow-lg flex items-center justify-center text-red-500 text-xl -rotate-6">
+                            <i class="ph-bold ph-warning"></i>
+                        </div>
+                    </div>
+
+                    <h1 class="text-3xl font-black text-slate-800 mb-1 tracking-tight">
+                        Save Me<br><span class="text-indigo-600">From Myself</span>
+                    </h1>
+                    <div class="h-1 w-12 bg-slate-200 rounded-full mb-6"></div>
+                    
+                    <!-- The Narrative Intro -->
+                    <div class="bg-white/80 backdrop-blur-sm p-5 rounded-2xl shadow-sm border border-slate-100 mb-8 w-full">
+                        <p class="text-xs font-bold text-indigo-500 uppercase tracking-widest mb-2">Mission Brief</p>
+                        <p class="text-slate-600 text-sm leading-relaxed font-medium">
+                            <span class="text-slate-900">You are the Virtual Assistant.</span><br>
+                            The Boss is typing dangerously fast. Your job is to spot and fix his typos before he hits <span class="font-bold text-red-500">SEND</span>.
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 w-full mb-6">
+                         <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-100 flex flex-col items-center">
+                             <span class="text-2xl mb-1">⏱️</span>
+                             <span class="text-[10px] font-bold text-slate-400 uppercase">Survive</span>
+                             <span class="text-sm font-bold text-slate-700">20 Seconds</span>
+                         </div>
+                         <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-100 flex flex-col items-center">
+                             <span class="text-2xl mb-1">👆</span>
+                             <span class="text-[10px] font-bold text-slate-400 uppercase">Tap To</span>
+                             <span class="text-sm font-bold text-slate-700">Fix Typos</span>
+                         </div>
+                    </div>
+
+                    <button onclick="Game.start()" class="group relative w-full py-4 bg-slate-900 text-white rounded-2xl font-bold text-lg shadow-xl shadow-slate-300 hover:bg-slate-800 hover:scale-[1.02] active:scale-95 transition-all overflow-hidden">
+                        <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-shimmer"></div>
+                        <span class="relative flex items-center justify-center gap-2">
+                            Accept Job <i class="ph-bold ph-arrow-right"></i>
+                        </span>
+                    </button>
+                    
+                    <p class="mt-4 text-[10px] text-slate-400 font-mono">v1.2 // SYSTEM READY</p>
+                </div>
+            </div>
+
+            <!-- Game Screen -->
+            <div id="game-screen" class="screen app-view relative">
+                <div id="app-header" class="app-header pt-10 pb-3 px-4 z-20 flex items-center justify-between sticky top-0">
+                    <div class="flex items-center gap-3">
+                        <button class="opacity-80 hover:opacity-100"><i class="ph-bold ph-arrow-left text-xl"></i></button>
+                        <div class="flex items-center gap-2">
+                            <div id="app-avatar" class="w-9 h-9 rounded-full bg-slate-200 flex items-center justify-center text-lg shadow-inner overflow-hidden">
+                                <i class="ph-fill ph-user" id="avatar-icon"></i>
+                            </div>
+                            <div class="leading-tight">
+                                <div id="contact-name" class="font-bold text-sm">Boss</div>
+                                <div class="text-[10px] opacity-70 flex items-center gap-1">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span> Online
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-col items-end">
+                        <div class="flex items-center gap-1 font-mono font-bold text-lg leading-none" id="timer-box">
+                            <i class="ph-fill ph-clock"></i> <span id="timer">20.0</span>
+                        </div>
+                        <div class="text-[10px] font-bold opacity-60">SCORE: <span id="score">0</span></div>
+                    </div>
+                </div>
+
+                <div class="w-full h-1 bg-black/5 z-20">
+                    <div id="progress-bar" class="h-full bg-current transition-all duration-100 ease-linear w-full opacity-50"></div>
+                </div>
+
+                <div class="flex-1 overflow-y-auto p-4 flex flex-col relative" id="chat-scroll-area">
+                    <div class="flex-1"></div>
+                    <div class="flex flex-col gap-1 mb-6 opacity-60 scale-95 origin-bottom-left">
+                        <div class="self-start bg-black/5 dark:bg-white/10 rounded-2xl rounded-bl-none px-4 py-2 text-sm max-w-[80%]">
+                            <span id="context-msg">Subject: IMPORTANT</span>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-1 items-end w-full">
+                        <div id="message-container" class="message-box p-4 w-full relative typing-cursor">
+                            <!-- Text Injected Here -->
+                        </div>
+                        <div class="flex justify-between w-full px-1">
+                            <span id="status-indicator" class="text-[10px] font-bold opacity-40 uppercase tracking-widest animate-pulse text-blue-500">Typing...</span>
+                            <i class="ph-bold ph-checks text-blue-500 opacity-0 transition-opacity" id="read-receipt"></i>
+                        </div>
+                    </div>
+                    
+                    <div id="feedback" class="absolute inset-0 pointer-events-none flex items-center justify-center z-30 opacity-0 transform scale-50 transition-all duration-300">
+                        <span id="feedback-text" class="text-5xl font-black text-green-500 drop-shadow-lg -rotate-6 border-4 border-green-500 px-4 py-1 rounded-xl bg-white/90">SAVED!</span>
+                    </div>
+                </div>
+
+                <div id="footer" class="p-3 pb-8 z-20 transition-colors duration-300 border-t border-black/5 bg-white/50 backdrop-blur-md">
+                    <button id="send-btn" class="w-full h-14 rounded-xl font-bold text-lg flex items-center justify-center gap-2 transition-all shadow-sm border border-black/5 bg-white text-slate-400 cursor-not-allowed">
+                        <span>Intercept</span> <i class="ph-bold ph-shield-check"></i>
+                    </button>
+                </div>
+
+                <div id="popup" class="hidden absolute z-50 bg-white rounded-xl shadow-2xl ring-1 ring-black/5 p-1 flex-col min-w-[140px] animate-pop origin-bottom-left bottom-24"></div>
+            </div>
+
+            <!-- Results Screen -->
+            <div id="result-screen" class="screen bg-white/90 backdrop-blur-sm items-center justify-center p-6 text-center z-30">
+                <div id="rank-card" class="bg-white w-full rounded-3xl shadow-xl p-8 mb-6 border border-slate-200 transform transition-all hover:scale-105 duration-500">
+                    <div class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Performance Review</div>
+                    <div id="rank-icon" class="w-32 h-32 mx-auto rounded-full bg-slate-100 flex items-center justify-center text-7xl mb-4 shadow-inner">😐</div>
+                    <h2 id="rank-grade" class="text-6xl font-black text-slate-800 mb-2">B-</h2>
+                    <h3 id="rank-title" class="text-xl font-bold text-blue-600 mb-4">Mediocre Typer</h3>
+                    <div class="grid grid-cols-2 gap-4 border-t border-slate-100 pt-6">
+                        <div>
+                            <div class="text-2xl font-black text-slate-800" id="final-score">0</div>
+                            <div class="text-xs text-slate-400 uppercase font-bold">Score</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-black text-slate-800" id="final-count">0</div>
+                            <div class="text-xs text-slate-400 uppercase font-bold">Msgs Saved</div>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="Game.start()" class="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold text-lg shadow-lg shadow-blue-200 hover:bg-blue-500 transition-colors flex items-center justify-center gap-2">
+                    <i class="ph-bold ph-arrow-counter-clockwise"></i> Try Again
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- CONFIG ---
+        const THEMES = {
+            whatsapp: {
+                appBg: '#efeae2', headerBg: '#008069', headerText: '#ffffff',
+                bubbleBg: '#ffffff', bubbleText: '#111b21', accent: '#00a884', fixedText: '#00a884',
+                radius: '0.5rem', font: "'Inter', sans-serif",
+                icon: 'ph-whatsapp-logo', pattern: 'whatsapp', footerBg: '#f0f2f5'
+            },
+            imessage: {
+                appBg: '#ffffff', headerBg: 'rgba(245,245,245,0.9)', headerText: '#000000',
+                bubbleBg: '#3b82f6', bubbleText: '#ffffff', accent: '#3b82f6', fixedText: '#fbbf24',
+                radius: '1.2rem', font: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+                icon: 'ph-chat-circle-dots', pattern: 'none', footerBg: '#ffffff'
+            },
+            twitter: {
+                appBg: '#000000', headerBg: 'rgba(0,0,0,0.8)', headerText: '#ffffff',
+                bubbleBg: '#000000', bubbleText: '#e7e9ea', accent: '#1d9bf0', fixedText: '#1d9bf0',
+                radius: '0px', font: "'Inter', sans-serif",
+                icon: 'ph-twitter-logo', pattern: 'none', darkMode: true, footerBg: '#000000', border: '1px solid #333'
+            },
+            gmail: {
+                appBg: '#ffffff', headerBg: '#ffffff', headerText: '#444444',
+                bubbleBg: '#ffffff', bubbleText: '#222222', accent: '#ea4335', fixedText: '#ea4335',
+                radius: '4px', font: "'Roboto', sans-serif",
+                icon: 'ph-envelope-simple', pattern: 'none', footerBg: '#ffffff', shadow: '0 1px 2px rgba(0,0,0,0.2)'
+            },
+            discord: {
+                appBg: '#36393f', headerBg: '#2f3136', headerText: '#ffffff',
+                bubbleBg: '#40444b', bubbleText: '#dcddde', accent: '#5865F2', fixedText: '#5865F2',
+                radius: '4px', font: "'Open Sans', sans-serif",
+                icon: 'ph-discord-logo', pattern: 'none', darkMode: true, footerBg: '#40444b'
+            },
+            tinder: {
+                appBg: '#ffffff', headerBg: 'linear-gradient(to right, #fd267a, #ff6036)', headerText: '#ffffff',
+                bubbleBg: '#f0f2f4', bubbleText: '#111', accent: '#fd267a', fixedText: '#fd267a',
+                radius: '1.5rem', font: "'Inter', sans-serif", icon: 'ph-fire-fill', pattern: 'grid', footerBg: '#ffffff'
+            }
+        };
+
+        const MESSAGES = [
+            { 
+                theme: 'gmail', from: "HR Dept", context: "RE: Harassment Complaint", 
+                text: "That accusation is totaly fals! I was only giving constuctive critcism to the intern about his atire. I am a profesional and I demand an appology immeditly.", 
+                mistakes: [
+                    {o:"totaly",c:"totally",l:["totally","total","toally"]},
+                    {o:"fals",c:"false",l:["false","falls","fails"]},
+                    {o:"constuctive",c:"constructive",l:["constructive","construction","constitutive"]},
+                    {o:"critcism",c:"criticism",l:["criticism","critique","critical"]},
+                    {o:"atire",c:"attire",l:["attire","tire","entire"]},
+                    {o:"profesional",c:"professional",l:["professional","professor","provisional"]},
+                    {o:"appology",c:"apology",l:["apology","ecology","apollogy"]},
+                    {o:"immeditly",c:"immediately",l:["immediately","media","idly"]}
+                ] 
+            },
+            { 
+                theme: 'whatsapp', from: "Mom", context: "Where are you?? Dinner started!", 
+                text: "Sory Mom, I cant make it to diner. Too much work at the ofice. Ill visit next wek I promis. Please dont be angery with me.", 
+                mistakes: [
+                    {o:"Sory",c:"Sorry",l:["Sorry","Store","Sore"]},
+                    {o:"diner",c:"dinner",l:["dinner","diver","dimmer"]},
+                    {o:"ofice",c:"office",l:["office","offal","official"]},
+                    {o:"wek",c:"week",l:["week","weak","wake"]},
+                    {o:"promis",c:"promise",l:["promise","miss","premise"]},
+                    {o:"angery",c:"angry",l:["angry","hungry","energy"]}
+                ] 
+            },
+            { 
+                theme: 'discord', from: "Raid Leader", context: "Pulling in 10s...", 
+                text: "Wait! Dont start the rade without me! I am loging in right now. My internet was laging. If you pull early I will kick you from the gild.", 
+                mistakes: [
+                    {o:"rade",c:"raid",l:["raid","fade","trade"]},
+                    {o:"loging",c:"logging",l:["logging","lodging","lagging"]},
+                    {o:"laging",c:"lagging",l:["lagging","laughing","landing"]},
+                    {o:"gild",c:"guild",l:["guild","gold","gilt"]}
+                ] 
+            },
+            { 
+                theme: 'twitter', from: "Followers", context: "Compose Tweet", 
+                text: "Just had a genus idea. What if we put a resturant on the Moon? The food would be good but no atmosphere haha. Investors DM me for colabaration. #visonary", 
+                mistakes: [
+                    {o:"genus",c:"genius",l:["genius","genus","genes"]},
+                    {o:"resturant",c:"restaurant",l:["restaurant","restroom","rant"]},
+                    {o:"colabaration",c:"collaboration",l:["collaboration","labor","oration"]},
+                    {o:"visonary",c:"visionary",l:["visionary","visor","visual"]}
+                ] 
+            },
+            { 
+                theme: 'imessage', from: "Landlord", context: "Rent is late again.", 
+                text: "I already sent the chek yesterday! Please chack your bank acount again before you acuse me. I am not lying about the mony. I am a good tenent.", 
+                mistakes: [
+                    {o:"chek",c:"cheque",l:["check","cheek","cheque"]},
+                    {o:"chack",c:"check",l:["check","cheek","cheque"]},
+                    {o:"acount",c:"account",l:["account","count","amount"]},
+                    {o:"acuse",c:"accuse",l:["accuse","cause","abuse"]},
+                    {o:"mony",c:"money",l:["money","many","moon"]},
+                    {o:"tenent",c:"tenant",l:["tenant","tenet","tent"]}
+                ] 
+            },
+            { 
+                theme: 'tinder', from: "Jessica (24)", context: "She said: 'Hey'", 
+                text: "Hey beautiful, you look gorgous in your pics. Want to grab cofee and discuss sinergy? I am a very succsesful CEO looking for a soulmate.", 
+                mistakes: [
+                    {o:"gorgous",c:"gorgeous",l:["gorgeous","fungus","george"]},
+                    {o:"cofee",c:"coffee",l:["coffee","fee","cough"]},
+                    {o:"sinergy",c:"synergy",l:["synergy","energy","sin"]},
+                    {o:"succsesful",c:"successful",l:["successful","suck","stressful"]}
+                ] 
+            },
+            { 
+                theme: 'discord', from: "ModTeam", context: "#appeals", 
+                text: "Unban me right now. I did not break the rools. The mod was being toxick and abused his powr. This is unfair treatmant and I will report this servr.", 
+                mistakes: [
+                    {o:"rools",c:"rules",l:["rules","rolls","tools"]},
+                    {o:"toxick",c:"toxic",l:["toxic","tick","tock"]},
+                    {o:"powr",c:"power",l:["power","poor","pour"]},
+                    {o:"treatmant",c:"treatment",l:["treatment","treat","mantra"]},
+                    {o:"servr",c:"server",l:["server","serve","saver"]}
+                ] 
+            },
+            { 
+                theme: 'gmail', from: "IT Support", context: "Ticket #4092", 
+                text: "My laptop screen is blak again. I cannot work like this. Fix it immediatly or I will fire the whole department. Stop asking if I pluged it in!", 
+                mistakes: [
+                    {o:"blak",c:"black",l:["black","blank","back"]},
+                    {o:"immediatly",c:"immediately",l:["immediately","medium","idly"]},
+                    {o:"pluged",c:"plugged",l:["plugged","plague","pug"]}
+                ] 
+            },
+            { 
+                theme: 'imessage', from: "Ex-Wife", context: "Can I see the kids?", 
+                text: "Please let me see them on Satuday. I promis I will be on time. I miss them alot. Don't be so crule to me, I am trying to chnage.", 
+                mistakes: [
+                    {o:"Satuday",c:"Saturday",l:["Saturday","Saturn","Day"]},
+                    {o:"promis",c:"promise",l:["promise","miss","prom"]},
+                    {o:"alot",c:"a lot",l:["a lot","allot","pilot"]},
+                    {o:"crule",c:"cruel",l:["cruel","rule","crude"]},
+                    {o:"chnage",c:"change",l:["change","charge","range"]}
+                ] 
+            },
+            { 
+                theme: 'whatsapp', from: "Employee Group", context: "Who ate my lunch?", 
+                text: "Stop wasting time chating! Get back to work. Also, whoever took my sandwitch from the fridge is fired. I am not kiding. Check the camras.", 
+                mistakes: [
+                    {o:"chating",c:"chatting",l:["chatting","cheating","charting"]},
+                    {o:"sandwitch",c:"sandwich",l:["sandwich","witch","sand"]},
+                    {o:"kiding",c:"kidding",l:["kidding","kid","hiding"]},
+                    {o:"camras",c:"cameras",l:["cameras","cam","karma"]}
+                ] 
+            },
+            { 
+                theme: 'twitter', from: "Customer Support", context: "DM: My order is late", 
+                text: "Listen, we are doing our best. The wether is bad causing delays. Your pakage will arrive eventuly. Stop spaming us or I will block you.", 
+                mistakes: [
+                    {o:"wether",c:"weather",l:["weather","whether","wither"]},
+                    {o:"pakage",c:"package",l:["package","pack","page"]},
+                    {o:"eventuly",c:"eventually",l:["eventually","event","vent"]},
+                    {o:"spaming",c:"spamming",l:["spamming","spa","same"]}
+                ] 
+            },
+            { 
+                theme: 'imessage', from: "Bro", context: "Gym?", 
+                text: "Nah bro, I pulled a musle. Cant lift today. Maybe tomorow we can hit legs. Honestly I am just lazzy right now.", 
+                mistakes: [
+                    {o:"musle",c:"muscle",l:["muscle","mussel","muzzle"]},
+                    {o:"tomorow",c:"tomorrow",l:["tomorrow","sorrow","marrow"]},
+                    {o:"lazzy",c:"lazy",l:["lazy","dizzy","hazy"]}
+                ] 
+            },
+            { 
+                theme: 'tinder', from: "Sarah (22)", context: "Bio", 
+                text: "Just looking for someone who can handl me. I like long walks on the beeach and watching sunsetts. Swipe right if you are ritch.", 
+                mistakes: [
+                    {o:"handl",c:"handle",l:["handle","hand","hold"]},
+                    {o:"beeach",c:"beach",l:["beach","each","peach"]},
+                    {o:"sunsetts",c:"sunsets",l:["sunsets","sets","sons"]},
+                    {o:"ritch",c:"rich",l:["rich","itch","pitch"]}
+                ] 
+            },
+            { 
+                theme: 'whatsapp', from: "Neighbour", context: "Music too loud!", 
+                text: "It is not that loud! Stop complaning. I have the right to listen to jazz in my own hous. If you call the copss I will sue you.", 
+                mistakes: [
+                    {o:"complaning",c:"complaining",l:["complaining","plane","planning"]},
+                    {o:"hous",c:"house",l:["house","mouse","hose"]},
+                    {o:"copss",c:"cops",l:["cops","caps","cups"]}
+                ] 
+            },
+            { 
+                theme: 'gmail', from: "All Staff", context: "Subject: Budget Cuts", 
+                text: "Due to recent losses, we are frezing all bonuses. This is necesary to save the company. Also, free cofee is cancelled. Work hardr.", 
+                mistakes: [
+                    {o:"frezing",c:"freezing",l:["freezing","frizz","fresh"]},
+                    {o:"necesary",c:"necessary",l:["necessary","nice","cesspool"]},
+                    {o:"cofee",c:"coffee",l:["coffee","fee","cough"]},
+                    {o:"hardr",c:"harder",l:["harder","hard","order"]}
+                ] 
+            }
+        ];
+
+        const AudioSys = {
+            ctx: null,
+            init() { if(!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); },
+            playClick() {
+                if(!this.ctx) return;
+                const t = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.frequency.setValueAtTime(800, t);
+                osc.frequency.exponentialRampToValueAtTime(100, t + 0.05);
+                gain.gain.setValueAtTime(0.3, t);
+                gain.gain.exponentialRampToValueAtTime(0.01, t + 0.05);
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.start(t); osc.stop(t + 0.05);
+            },
+            playTone(type, f, d, vol=0.1) {
+                if(!this.ctx) return;
+                const o = this.ctx.createOscillator();
+                const g = this.ctx.createGain();
+                o.type = type; o.frequency.value = f;
+                g.gain.setValueAtTime(vol, this.ctx.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + d);
+                o.connect(g); g.connect(this.ctx.destination);
+                o.start(); o.stop(this.ctx.currentTime + d);
+            }
+        };
+
+        const Boss = {
+            elem: document.getElementById('boss'),
+            state(state) {
+                this.elem.classList.remove('typing', 'angry', 'success');
+                if (state) this.elem.classList.add(state);
+            }
+        }
+
+        const UI = {
+            root: document.documentElement.style,
+            screens: { title: document.getElementById('title-screen'), game: document.getElementById('game-screen'), result: document.getElementById('result-screen') },
+            elems: {
+                timer: document.getElementById('timer'),
+                score: document.getElementById('score'),
+                msgBox: document.getElementById('message-container'),
+                header: document.getElementById('app-header'),
+                sendBtn: document.getElementById('send-btn'),
+                popup: document.getElementById('popup'),
+                feedback: document.getElementById('feedback'),
+                ctxMsg: document.getElementById('context-msg'),
+                contact: document.getElementById('contact-name'),
+                avatarIcon: document.getElementById('avatar-icon'),
+                status: document.getElementById('status-indicator'),
+                chatArea: document.getElementById('chat-scroll-area')
+            },
+            showScreen(id) { Object.values(this.screens).forEach(s => s.classList.remove('active')); this.screens[id].classList.add('active'); },
+            applyTheme(key) {
+                const t = THEMES[key] || THEMES.imessage;
+                const r = this.root;
+                const g = document.getElementById('game-screen');
+                r.setProperty('--app-bg', t.appBg);
+                r.setProperty('--header-bg', t.headerBg);
+                r.setProperty('--header-text', t.headerText);
+                r.setProperty('--bubble-bg', t.bubbleBg);
+                r.setProperty('--bubble-text', t.bubbleText);
+                r.setProperty('--accent', t.accent);
+                r.setProperty('--fixed-text', t.fixedText || t.accent);
+                r.setProperty('--font-main', t.font);
+                r.setProperty('--border-radius', t.radius);
+                r.setProperty('--shadow', t.shadow || 'none');
+                g.className = `screen active app-view ${t.darkMode ? 'dark-mode' : ''} ${t.pattern === 'whatsapp' ? 'pattern-whatsapp' : ''} ${t.pattern === 'grid' ? 'pattern-grid' : ''}`;
+                this.elems.avatarIcon.className = `ph-fill ${t.icon}`;
+                this.elems.avatarIcon.style.color = t.darkMode ? '#fff' : t.accent;
+                document.getElementById('footer').style.background = t.footerBg;
+                if (t.border) this.elems.msgBox.style.border = t.border; else this.elems.msgBox.style.border = 'none';
+            }
+        };
+
+        const Game = {
+            state: { score: 0, msgs: 0, time: 20, active: false, deck: [] }, // Set time to 20
+            loop: null, typeLoop: null, currentMsg: null, mistakeCount: 0, mistakesFixed: 0, isTyping: false,
+            start() {
+                AudioSys.init();
+                if(AudioSys.ctx.state === 'suspended') AudioSys.ctx.resume();
+                this.state = { score: 0, msgs: 0, time: 20, active: true, deck: [...MESSAGES].sort(()=>Math.random()-.5) };
+                UI.showScreen('game');
+                this.nextMsg();
+                this.loop = setInterval(() => this.tick(), 100);
+            },
+            tick() {
+                if (!this.state.active) return;
+                this.state.time -= 0.1;
+                UI.elems.timer.innerText = Math.max(0, this.state.time).toFixed(1);
+                document.getElementById('progress-bar').style.width = (this.state.time/20)*100 + "%";
+                if (this.isTyping) Boss.state('typing');
+                else if (this.state.time <= 5) {
+                    Boss.state('angry');
+                    UI.elems.sendBtn.classList.add('animate-shake');
+                    UI.elems.sendBtn.style.color = '#ef4444';
+                    UI.elems.sendBtn.innerText = "HE'S GONNA SEND IT!";
+                } else {
+                    Boss.state('');
+                    UI.elems.sendBtn.classList.remove('animate-shake');
+                }
+                if (this.state.time <= 0) this.end();
+            },
+            nextMsg() {
+                if(this.state.deck.length === 0) this.state.deck = [...MESSAGES].sort(()=>Math.random()-.5);
+                const msg = this.state.deck.pop();
+                this.currentMsg = msg;
+                this.mistakeCount = 0;
+                this.mistakesFixed = 0;
+                
+                UI.applyTheme(msg.theme);
+                // Update Contact Name to reflect OUTGOING message
+                UI.elems.contact.innerText = `To: ${msg.from}`; 
+                UI.elems.ctxMsg.innerText = msg.context;
+                UI.elems.score.innerText = this.state.score;
+                UI.elems.sendBtn.innerHTML = `<span>Intercept</span> <i class="ph-bold ph-shield-check"></i>`;
+                UI.elems.sendBtn.style.background = 'white';
+                UI.elems.sendBtn.style.color = '#94a3b8';
+                UI.elems.sendBtn.style.cursor = 'not-allowed';
+                UI.elems.msgBox.innerHTML = '';
+                UI.elems.msgBox.classList.add('typing-cursor');
+                UI.elems.status.innerText = "BOSS TYPING...";
+                UI.elems.status.classList.add('animate-pulse');
+                this.isTyping = true;
+                const words = msg.text.split(/(\s+)/);
+                let wordIndex = 0;
+                const speed = 50; 
+                if (this.typeLoop) clearInterval(this.typeLoop);
+                this.typeLoop = setInterval(() => {
+                    if (!this.state.active) return clearInterval(this.typeLoop);
+                    if (wordIndex < words.length) {
+                        const w = words[wordIndex];
+                        const span = document.createElement('span');
+                        span.innerText = w;
+                        const clean = w.trim().replace(/[.,/#!$%^&*;:{}=\-_`~()?]/g,"");
+                        const err = msg.mistakes.find(m => m.o === clean);
+                        if (err && w.trim().length > 0) {
+                            this.mistakeCount++;
+                            span.className = 'mistake-word';
+                            span.onclick = (e) => this.showPopup(e, span, err);
+                        }
+                        UI.elems.msgBox.appendChild(span);
+                        UI.elems.chatArea.scrollTop = UI.elems.chatArea.scrollHeight;
+                        if (w.trim().length > 0) AudioSys.playClick();
+                        wordIndex++;
+                    } else {
+                        clearInterval(this.typeLoop);
+                        this.isTyping = false;
+                        UI.elems.msgBox.classList.remove('typing-cursor');
+                        UI.elems.status.innerText = "Drafting paused";
+                        UI.elems.status.classList.remove('animate-pulse');
+                    }
+                }, speed);
+            },
+            showPopup(e, span, err) {
+                e.stopPropagation();
+                if(span.classList.contains('word-fixed')) return;
+                AudioSys.playTone('sine', 400, 0.1);
+                const pop = UI.elems.popup;
+                pop.innerHTML = '';
+                [...err.l].sort(()=>Math.random()-.5).forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = "w-full text-left px-4 py-3 hover:bg-slate-100 text-slate-800 text-sm font-semibold border-b border-slate-100 last:border-0";
+                    btn.innerText = opt;
+                    btn.onclick = () => {
+                        if(opt === err.c) {
+                            AudioSys.playTone('sine', 800, 0.1);
+                            const original = span.innerText;
+                            const prefix = original.match(/^\W*/)[0] || '';
+                            const suffix = original.match(/\W*$/)[0] || '';
+                            span.innerText = prefix + opt + suffix;
+                            span.className = 'word-fixed';
+                            this.state.score += 100;
+                            UI.elems.score.innerText = this.state.score;
+                            this.mistakesFixed++;
+                            if (this.mistakesFixed >= this.mistakeCount && !this.isTyping) {
+                                this.completeMsg();
+                            }
+                        } else {
+                            AudioSys.playTone('sawtooth', 150, 0.2);
+                            this.state.score = Math.max(0, this.state.score - 50);
+                            UI.elems.score.innerText = this.state.score;
+                            span.classList.add('animate-shake');
+                            setTimeout(()=>span.classList.remove('animate-shake'), 300);
+                        }
+                        pop.classList.add('hidden');
+                    };
+                    pop.appendChild(btn);
+                });
+                pop.classList.remove('hidden');
+                const rect = span.getBoundingClientRect();
+                const container = document.getElementById('game-screen').getBoundingClientRect();
+                let left = rect.left - container.left;
+                let top = rect.top - container.top - 120;
+                if(left < 10) left = 10;
+                if(left > container.width - 150) left = container.width - 150;
+                if(top < 60) top = rect.bottom - container.top + 10;
+                pop.style.left = left + 'px';
+                pop.style.top = top + 'px';
+                setTimeout(() => document.addEventListener('click', () => pop.classList.add('hidden'), {once:true}), 10);
+            },
+            completeMsg() {
+                this.state.score += 500;
+                this.state.msgs++;
+                this.state.time = Math.min(20, this.state.time + 5);
+                AudioSys.playTone('triangle', 600, 0.1);
+                Boss.state('success');
+                UI.elems.sendBtn.style.background = 'var(--accent)';
+                UI.elems.sendBtn.style.color = 'white';
+                UI.elems.sendBtn.innerHTML = `<span>SAFE!</span> <i class="ph-bold ph-check"></i>`;
+                UI.elems.feedback.classList.remove('opacity-0', 'scale-50');
+                UI.elems.feedback.classList.add('opacity-100', 'scale-100', 'rotate-[-6deg]');
+                setTimeout(() => {
+                    UI.elems.feedback.classList.remove('opacity-100', 'scale-100', 'rotate-[-6deg]');
+                    UI.elems.feedback.classList.add('opacity-0', 'scale-50');
+                    if (this.state.active) this.nextMsg();
+                }, 1200);
+            },
+            end() {
+                this.state.active = false;
+                clearInterval(this.loop);
+                clearInterval(this.typeLoop);
+                Boss.state('angry'); 
+                UI.showScreen('result');
+                const s = this.state.score;
+                let grade = 'F', title = 'Disaster', icon = '💀';
+                if(s > 5000) { grade = 'S'; title = 'Godlike'; icon = '👑'; }
+                else if(s > 3000) { grade = 'A'; title = 'Promoted'; icon = '🔥'; }
+                else if(s > 1500) { grade = 'B'; title = 'Passable'; icon = '👍'; }
+                else if(s > 500) { grade = 'C'; title = 'Risky'; icon = '😬'; }
+                document.getElementById('rank-grade').innerText = grade;
+                document.getElementById('rank-title').innerText = title;
+                document.getElementById('rank-icon').innerText = icon;
+                document.getElementById('final-score').innerText = s;
+                document.getElementById('final-count').innerText = this.state.msgs;
+            }
+        };
+    </script>
+</body>
+</html>
