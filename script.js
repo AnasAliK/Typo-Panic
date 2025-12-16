@@ -343,9 +343,72 @@
                 }
             },
 
+            // --- PROCEDURAL ENVIRONMENT GENERATION ---
+            applyRandomEnvironment() {
+                const r = document.documentElement.style;
+                
+                // Helper for random int
+                const rand = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
+                // Helper for random color component
+                const randCol = () => rand(0, 255);
+                
+                // 1. Generate Wall/Floor Tone (Cool vs Warm)
+                const hue = rand(0, 360);
+                const sat = rand(10, 30); // Low saturation for walls
+                
+                // Walls: Light, Floor: Darker
+                const wallTop = `hsl(${hue}, ${sat}%, ${rand(85, 95)}%)`;
+                const wallBtm = `hsl(${hue}, ${sat}%, ${rand(70, 80)}%)`;
+                const floorTop = `hsl(${hue}, ${sat + 10}%, ${rand(30, 40)}%)`;
+                const floorBtm = `hsl(${hue}, ${sat + 10}%, ${rand(15, 25)}%)`;
+
+                // 2. Desk Wood Type
+                // Categories: Red (Mahogany), Yellow (Pine), Brown (Walnut), Grey (Modern)
+                const woodType = rand(0, 3); 
+                let deskHue, deskSat, deskLight;
+                
+                if(woodType === 0) { // Reddish
+                    deskHue = rand(0, 20); deskSat = rand(40, 60); deskLight = rand(25, 45);
+                } else if(woodType === 1) { // Yellow/Orange
+                    deskHue = rand(25, 45); deskSat = rand(50, 70); deskLight = rand(40, 60);
+                } else if(woodType === 2) { // Brown
+                    deskHue = rand(15, 35); deskSat = rand(30, 50); deskLight = rand(20, 35);
+                } else { // Modern Grey/Black
+                    deskHue = 0; deskSat = 0; deskLight = rand(20, 80);
+                }
+
+                const deskMain = `hsl(${deskHue}, ${deskSat}%, ${deskLight}%)`;
+                const deskDark = `hsl(${deskHue}, ${deskSat}%, ${Math.max(0, deskLight - 15)}%)`;
+                const deskShadow = `hsl(${deskHue}, ${deskSat}%, ${Math.max(0, deskLight - 25)}%)`;
+
+                // 3. Desk Mat Color (Contrasting)
+                const matH = (deskHue + 180) % 360;
+                const matColor = `hsl(${matH}, 40%, 20%)`;
+
+                // 4. Sky Color (Time of day)
+                const timeOfDay = rand(0, 2);
+                let skyColor;
+                if(timeOfDay === 0) skyColor = '#93c5fd'; // Day
+                else if(timeOfDay === 1) skyColor = '#1e3a8a'; // Night
+                else skyColor = '#fdba74'; // Sunset
+
+                // Apply Variables
+                r.setProperty('--wall-top', wallTop);
+                r.setProperty('--wall-btm', wallBtm);
+                r.setProperty('--floor-top', floorTop);
+                r.setProperty('--floor-btm', floorBtm);
+                r.setProperty('--desk-main', deskMain);
+                r.setProperty('--desk-dark', deskDark);
+                r.setProperty('--desk-shadow', deskShadow);
+                r.setProperty('--mat-color', matColor);
+                r.setProperty('--sky-color', skyColor);
+            },
+
             startGame() {
                 AudioSys.playClick();
                 
+                this.applyRandomEnvironment(); // Apply procedural background theme
+
                 // Select random app conversation
                 const apps = Object.keys(CONVERSATIONS);
                 const randomAppKey = apps[Math.floor(Math.random() * apps.length)];

@@ -6,13 +6,24 @@
             --header-text: #000000;
             --bubble-bg: #ffffff;
             --bubble-text: #000000;
-            --bubble-recv-bg: #e5e7eb; /* Default recv color */
+            --bubble-recv-bg: #e5e7eb;
             --bubble-recv-text: #000000;
             --accent: #3b82f6;
             --fixed-text: #3b82f6;
             --font-main: 'Inter', sans-serif;
             --border-radius: 1.25rem;
             --shadow: 0 2px 5px rgba(0,0,0,0.05);
+            
+            /* Dynamic Environment Variables (Default Blue/Grey Theme) */
+            --wall-top: #e2e8f0;
+            --wall-btm: #cbd5e1;
+            --floor-top: #334155;
+            --floor-btm: #1e293b;
+            --desk-main: #5c3a21;
+            --desk-dark: #3f2613;
+            --desk-shadow: #2a1a0d;
+            --mat-color: #1e293b;
+            --sky-color: #93c5fd;
             
             /* Boss Colors */
             --boss-skin: #fca5a5;
@@ -79,15 +90,18 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: #334155;
+            background: #cbd5e1; /* Fallback */
             border-radius: 4px;
             margin-right: 2rem;
             overflow: hidden;
             border: 2px solid #1e293b;
             box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            /* Dynamic Room Gradient using CSS Variables */
+            background: linear-gradient(to bottom, var(--wall-top) 0%, var(--wall-btm) 65%, var(--floor-top) 65%, var(--floor-btm) 100%);
+            transition: background 1s ease;
         }
 
-        /* CCTV Effects */
+        /* CCTV Effects Overlay */
         .world-scene::before {
             content: '';
             position: absolute;
@@ -103,7 +117,7 @@
             content: '';
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, rgba(0,0,0,0) 60%, rgba(0,0,0,0.6) 100%);
+            background: radial-gradient(circle, rgba(0,0,0,0) 60%, rgba(0,0,0,0.4) 100%);
             pointer-events: none;
             z-index: 101;
         }
@@ -117,6 +131,7 @@
             font-family: monospace;
             font-size: 14px;
             letter-spacing: 1px;
+            text-shadow: 0 1px 2px black;
         }
         .rec-dot {
             display: inline-block;
@@ -129,58 +144,93 @@
         }
         @keyframes blink-rec { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
-        /* Background Details */
+        /* --- DETAILED BACKGROUND ELEMENTS --- */
         .office-window {
             position: absolute;
-            top: 50px;
-            left: 30px;
+            top: 40px;
+            left: 40px;
             width: 140px;
             height: 180px;
-            background: #1e293b;
-            border: 8px solid #475569;
+            background: var(--sky-color); /* Dynamic Sky */
+            border: 6px solid #475569;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.2), 5px 5px 15px rgba(0,0,0,0.1);
             overflow: hidden;
+            z-index: 1;
+            transition: background 1s ease;
         }
-        .city-view {
+        .city-skyline {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 40%;
+            background: 
+                linear-gradient(to top, #1e293b 0%, #334155 100%);
+            clip-path: polygon(0% 100%, 0% 20%, 10% 20%, 10% 50%, 20% 50%, 20% 10%, 35% 10%, 35% 60%, 45% 60%, 45% 30%, 60% 30%, 60% 80%, 75% 80%, 75% 20%, 85% 20%, 85% 50%, 100% 50%, 100% 100%);
+        }
+        .window-reflection {
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: linear-gradient(45deg, transparent 45%, rgba(255,255,255,0.2) 50%, transparent 55%);
+            transform: rotate(30deg);
+        }
+        .blind-slats {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: repeating-linear-gradient(to bottom, #f8fafc 0px, #f8fafc 10px, rgba(0,0,0,0.1) 10px, rgba(0,0,0,0.1) 12px);
+            opacity: 0.3;
+        }
+
+        .office-bookshelf {
+            position: absolute;
+            top: 60px;
+            right: 40px;
+            width: 100px;
+            height: 220px;
+            background: var(--desk-main); /* Match Desk */
+            border: 4px solid var(--desk-dark);
+            border-bottom: 0;
+            z-index: 1;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            padding: 2px;
+            transition: background-color 1s ease, border-color 1s ease;
+        }
+        .shelf-row {
+            height: 25%;
+            border-bottom: 4px solid var(--desk-dark);
+            display: flex;
+            align-items: flex-end;
+            padding: 0 2px;
+            gap: 2px;
+        }
+        .book {
+            width: 10px;
+            border-radius: 2px 2px 0 0;
+        }
+
+        /* --- NEW PAINTING --- */
+        .office-painting {
+            position: absolute;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px;
+            height: 90px;
+            background: #1e293b; /* Frame */
+            padding: 6px;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+            z-index: 0;
+        }
+        .art-canvas {
             width: 100%;
             height: 100%;
-            background: linear-gradient(to bottom, #0f172a, #1e293b);
-            position: relative;
+            background: radial-gradient(circle at 30% 30%, #facc15 10%, transparent 12%), linear-gradient(to bottom, #38bdf8, #818cf8);
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
         }
-        .city-view::after {
-            content: '';
-            position: absolute;
-            bottom: 10px;
-            left: 0;
-            width: 100%;
-            height: 30px;
-            background-image: 
-                radial-gradient(circle at 15px 15px, #fbbf24 2px, transparent 2px),
-                radial-gradient(circle at 40px 8px, #fbbf24 1px, transparent 1px),
-                radial-gradient(circle at 70px 20px, #fbbf24 2px, transparent 2px);
-            background-size: 120px 30px;
-            background-repeat: repeat-x;
-            opacity: 0.4;
-        }
-        .office-cabinet {
-            position: absolute;
-            top: 150px;
-            right: 30px;
-            width: 80px;
-            height: 120px;
-            background: #78350f;
-            border-radius: 4px;
-            border-bottom: 10px solid #451a03;
-        }
-        .office-plant {
-            position: absolute;
-            bottom: 130px;
-            right: 40px;
-            width: 60px;
-            height: 80px;
-        }
-        .plant-pot { width: 100%; height: 40%; background: #b45309; border-radius: 0 0 8px 8px; position: absolute; bottom: 0; }
-        .plant-leaves { width: 80%; height: 70%; background: #065f46; border-radius: 50% 50% 0 0; position: absolute; bottom: 30%; left: 10%; }
-
+        
         /* BOSS CHARACTER */
         .boss-container {
             position: relative;
@@ -318,15 +368,112 @@
         .desk {
             width: 140%;
             height: 400px;
-            background: #78350f;
+            /* Dynamic Wood Colors */
+            background-color: var(--desk-main);
+            background-image: 
+                repeating-linear-gradient(90deg, transparent, transparent 50px, rgba(0,0,0,0.1) 50px, rgba(0,0,0,0.1) 53px),
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.05) 3px);
             position: absolute;
             bottom: -320px;
             left: -20%;
             transform: perspective(600px) rotateX(15deg);
             z-index: 40;
-            border-top: 20px solid #92400e;
+            border-top: 5px solid var(--desk-dark); 
             box-shadow: 0 -10px 30px rgba(0,0,0,0.6);
+            transition: background-color 1s ease, border-top-color 1s ease;
         }
+
+        /* --- DESK FRONT (Vertical Face) --- */
+        .desk-front {
+            position: absolute;
+            bottom: -50px; 
+            left: 0;
+            width: 100%;
+            height: 50px; 
+            /* Dynamic Front Gradient */
+            background: linear-gradient(to bottom, var(--desk-dark), var(--desk-shadow));
+            transform-origin: top;
+            transform: rotateX(-15deg); 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            transition: background 1s ease;
+        }
+
+        /* Desk Details */
+        .desk-mat {
+            position: absolute;
+            top: 100px; 
+            left: 20%;
+            width: 60%;
+            height: 200px;
+            background: var(--mat-color); /* Dynamic Mat */
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: background-color 1s ease;
+        }
+
+        /* --- UPPER SLAB (Raised Shelf) --- */
+        .desk-upper-slab {
+            position: absolute;
+            top: 20px;
+            left: 10%;
+            width: 80%;
+            height: 60px;
+            background: var(--desk-dark);
+            border-top: 1px solid var(--desk-main);
+            border-radius: 4px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            z-index: 10;
+            transition: background-color 1s ease, border-color 1s ease;
+        }
+
+        .desk-nameplate {
+            position: relative; /* Inside slab now */
+            width: 120px;
+            height: 35px;
+            background: linear-gradient(to bottom, #fbbf24, #b45309);
+            border-bottom: 4px solid #78350f;
+            transform: perspective(200px) rotateX(10deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 900;
+            color: #451a03;
+            box-shadow: 0 5px 5px rgba(0,0,0,0.3);
+            letter-spacing: 1px;
+            text-shadow: 0 1px 0 rgba(255,255,255,0.4);
+        }
+        
+        .coffee-mug {
+            position: relative; /* Inside slab */
+            width: 35px;
+            height: 35px;
+            background: #ef4444;
+            border-radius: 50%;
+            box-shadow: 2px 5px 5px rgba(0,0,0,0.3);
+            border: 3px solid #fff;
+            margin-left: 20px;
+        }
+        .coffee-liquid {
+            position: absolute;
+            top: 3px; left: 3px; right: 3px; bottom: 3px;
+            background: #3f2613;
+            border-radius: 50%;
+        }
+        .steam {
+            position: absolute;
+            top: -15px; left: 10px;
+            width: 5px; height: 12px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 50%;
+            filter: blur(2px);
+            animation: steam 2s infinite;
+        }
+        @keyframes steam { 0% { transform: translateY(0) scale(1); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateY(-15px) scale(2); opacity: 0; } }
 
         /* Animations */
         @keyframes thumb-tap-l { 0%, 100% { transform: rotate(-40deg) translateY(0); } 50% { transform: rotate(-45deg) translateY(-3px); } }
@@ -436,11 +583,16 @@
         .pattern-grid { background-image: radial-gradient(var(--accent) 1px, transparent 1px); background-size: 20px 20px; background-position: -10px -10px; }
 
         .mistake-word {
-            position: relative; color: #ef4444; font-weight: 700; cursor: pointer;
-            border-bottom: 2px dashed rgba(239, 68, 68, 0.4); transition: all 0.2s; padding: 0 1px;
+            position: relative; 
+            color: #b91c1c; /* UPDATED: Darker red for higher contrast (Red 700) */
+            font-weight: 800; 
+            cursor: pointer;
+            border-bottom: 2px dashed rgba(185, 28, 28, 0.5); 
+            transition: all 0.2s; 
+            padding: 0 1px;
         }
-        .dark-mode .mistake-word { color: #f87171; border-bottom-color: rgba(248, 113, 113, 0.4); }
-        .mistake-word:hover { background-color: rgba(239, 68, 68, 0.1); border-radius: 4px; }
+        .dark-mode .mistake-word { color: #fca5a5; border-bottom-color: rgba(252, 165, 165, 0.5); }
+        .mistake-word:hover { background-color: rgba(185, 28, 28, 0.1); border-radius: 4px; }
         .word-fixed { color: var(--fixed-text); animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: inline-block; }
         
         @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
