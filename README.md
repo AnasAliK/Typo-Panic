@@ -4,7 +4,7 @@
 
 **Genre:** Fast-paced Text Puzzle / Humor
 **Platform:** Web (HTML5, itch.io)
-**Playtime:** 20 seconds per run
+**Playtime:** 20/40/60 seconds per run
 **Dev:** —––
 
 ---
